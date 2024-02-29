@@ -3,6 +3,7 @@ const router = express.Router();
 const UsersController= require("../Controllers/UsersController")
 
 
+router.get("/cart",UsersController.GetUserCart)
 
 
 

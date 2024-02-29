@@ -1,8 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 2024;
-// const bcrypt = require("bcrypt");
-// const jwt = require('jsonwebtoken');
+
 const cors = require('cors');
 
 const mongoose = require('mongoose');
@@ -27,6 +26,7 @@ app.use("/auth",AuthRoutes)
 app.use("/cinemas",CinemasRoutes)
 app.use("/movies",MoviesRoutes)
 app.use("/reserve",ReservationRoutes)
+app.use("/user",UsersRoutes)
 
 
 
