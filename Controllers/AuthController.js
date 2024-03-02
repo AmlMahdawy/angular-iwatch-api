@@ -45,7 +45,13 @@ let login=async(req,res)=>{
     res.status(200).send({token:token});
 }
 
+let decodeToken=async(req,res)=>{
+    let token=req.header("Authorization")
+    let userID= jwt.verify(token,"secret").id
+    return userID
+}
 
 
 
-module.exports = {register, login,}
+
+module.exports = {register, login,decodeToken}

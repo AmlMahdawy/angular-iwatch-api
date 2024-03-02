@@ -1,32 +1,36 @@
 const ReseervationsModel = require('../Models/ReservationModel');
-const jwt = require('jsonwebtoken');
+const AuthModel = require('../Models/AuthModel');
+const AuthController = require("../Controllers/AuthController")
+const UsersController= require("../Controllers/UsersController")
 
 
 
-let MovieReservationDetails=async (req,res,next)=>{
-    let movie=req.body.movie
-    let MatchedMovies = await ReseervationsModel.find({ Title:movie }, { cinema: 1,date:1,time:1, _id: 0 })
-    let cinemas=[]
-    let dates=[]
-    let times=[]
-    MatchedMovies.forEach((el)=>{
-      if(!cinemas.includes(el.cinema)){cinemas.push(el.cinema)}
-      if(!dates.includes(el.date)){dates.push(el.date)}
-      if(!times.includes(el.time)){times.push(el.time)}
+
+
+let MovieReservationDetails = async (req, res, next) => {
+    let movie = req.body.movie
+    let MatchedMovies = await ReseervationsModel.find({ Title: movie }, { cinema: 1, date: 1, time: 1, _id: 0 })
+    let cinemas = []
+    let dates = []
+    let times = []
+    MatchedMovies.forEach((el) => {
+        if (!cinemas.includes(el.cinema)) { cinemas.push(el.cinema) }
+        if (!dates.includes(el.date)) { dates.push(el.date) }
+        if (!times.includes(el.time)) { times.push(el.time) }
 
 
 
-      
+
     })
-res.send({cinemas:cinemas,dates:dates,times:times})
+    res.send({ cinemas: cinemas, dates: dates, times: times })
 
 
 }
 
 let GetCinemaDates = async (req, res, next) => {
     let cinemaName = req.body.cinema
-    let movieName=req.body.movieName
-    let dates = await ReseervationsModel.find({ cinema: cinemaName,"movie-name":movieName}, { date: 1, _id: 0 })
+    let movieName = req.body.movieName
+    let dates = await ReseervationsModel.find({ cinema: cinemaName, "movie-name": movieName }, { date: 1, _id: 0 })
     let uniqueDates = []
     dates.forEach((el) => {
         if (!uniqueDates.includes(el.date)) {
@@ -52,70 +56,102 @@ let GetCinemaMovies = async (req, res, next) => {
 let GetCinemaTimes = async (req, res, next) => {
     let cinemaName = req.body.cinema
     let Date = req.body.date
-    let movie=req.body.movie
+    let movie = req.body.movie
     let times = await ReseervationsModel
-    .find({ 
-        cinema: cinemaName,
-         date: Date ,
-         "movie-name":movie},
-          { "time": 1,
-          reserved:1, 
-          _id: 0 })
- 
+        .find({
+            cinema: cinemaName,
+            date: Date,
+            "movie-name": movie
+        },
+            {
+                "time": 1,
+                reserved: 1,
+                _id: 0
+            })
+
     res.send(times)
 }
 
 
-let RenderSeats=async(req,res,next)=>{
+let RenderSeats = async (req, res, next) => {
     let cinemaName = req.body.cinema
     let Date = req.body.date
     let Time = req.body.time
-    let movie=req.body.movie
+    let movie = req.body.movie
 
 
 
-    let reservation = await ReseervationsModel.findOne({ 
-        cinema:cinemaName,
-        date:Date,
-        time:+Time,
-        "movie-name":movie 
-   })
-    res.send(reservation)
+    let reservation = await ReseervationsModel.findOne({
+        cinema: cinemaName,
+        date: Date,
+        time: +Time,
+        "movie-name": movie
+    })
+    res.send(reservation.reserved)
+}
+let addSeatToCart=async(req,res,next)=>{
+    let cinemaName = req.body.cinema
+    let Date = req.body.date
+    let Time = req.body.time
+    let movie = req.body.movie
+    let reservationData = req.body.reserve
+
+    let token = req.header("Authorization")
+    let userID = jwt.verify(token, "secret").id
+     userCart = {
+        cinema: cinemaName,
+        date: Date,
+        time: +Time,
+        "movie-name": movie,
+        seats: reservationData
+    }
+    let user = await AuthModel.findOne({ _id: userID })
+   
+    user.cart.push(userCart)
+    await user.save()
+    res.send(user)
 }
 
-let ReserveSeat= async(req, res, next)=>{
+let fromCartToPurchased=async(req)=>{
+    let userID = await AuthController.decodeToken(req)
+
+    let user = await UsersController.GetUserById(userID)
+
+     user.cart.forEach((movie)=>{
+        user.purchased.push(movie)
+     })
+     user.cart=[]
+     await user.save()
+}
+let CheckOut = async (req, res, next) => {
     let cinemaName = req.body.cinema
     let Date = req.body.date
     let Time = req.body.time
-    let movie=req.body.movie
-    let reservationData=req.body.reserve
+    let movie = req.body.movie
+    let reservationData = req.body.reserve
 
-    let token=req.header("Authorization")
-    let userID= jwt.verify(token,"secret").id
-    reservationData.push({userId:userID})
-    
-    let reservation = await ReseervationsModel.findOne({ 
-        cinema:cinemaName,
-        date:Date,
-        time:+Time,
-        "movie-name":movie 
-   })
-  //  reservation.reserved.
-   reservation.reserved.push(reservationData)
-   
+    let reservation = await ReseervationsModel.findOne({
+        cinema: cinemaName,
+        date: Date,
+        time: Time,
+        "movie-name": movie
+    })
+    reservationData.forEach((seat) => {
+        reservation.reserved.push(seat)
+    })
+    await reservation.save()
 
-    // reservationData.forEach((seat)=>{
-    //   reservation.reserved.push(seat)
-    // })
- await reservation.save()
+   await fromCartToPurchased(req)
 
-  res.send(reservation)
+    res.send({checkedOut:true})
 }
 
 module.exports = {
     GetCinemaDates,
     GetCinemaTimes,
     GetCinemaMovies,
-     ReserveSeat,
-     RenderSeats,
-     MovieReservationDetails}
+    CheckOut,
+    RenderSeats,
+    MovieReservationDetails,
+    addSeatToCart
+}
