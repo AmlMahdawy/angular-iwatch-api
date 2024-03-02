@@ -5,9 +5,15 @@ const ReservationsController= require("../Controllers/ReservationsController")
 
 
 
+
 // filter routes
 
-router.get("/movie-name",ReservationsController.MovieReservationDetails)
+router.post("/cinema-name/dates",ReservationsController.GetCinemaDates)
+router.post("/cinema-name/dates/movies",ReservationsController.GetCinemaMovies)
+router.post("/cinema-name/dates/movies/times",ReservationsController.GetCinemaTimes)
+
+// filter routes
+// router.get("/movie-name",ReservationsController.MovieReservationDetails)
 
 //renders already reserved seats
 router.get("/reserved-seats",ReservationsController.RenderSeats)

@@ -6,10 +6,6 @@ const usersSchema = new mongoose.Schema({
     email:{
         type:String,
         required:true,
-        validate:{
-            validator:(val)=>{return validator.isEmail(val)},
-            message:"{email} Not Valid!!"
-        }
     },
     password:{type:String, minLength:5, required:true},
     isAdmin:{type:Boolean},

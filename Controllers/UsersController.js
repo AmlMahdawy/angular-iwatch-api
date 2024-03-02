@@ -12,9 +12,17 @@ let GetUserCart= async (req,res,next)=>{
     console.log(cart)
     res.send({cart:cart})
 }
-
-module.exports={
-    GetUserCart
+let GetUserData= async (req,res,next)=>{
+    let token=req.header("Authorization")
+    let UserEmail= jwt.verify(token,"secret").email
+ 
+    let user =await AuthModel.findOne({email:UserEmail})
+  
+    res.send(user)
 }
 
-//reserved =[{}]
+module.exports={
+    GetUserCart,
+    GetUserData
+}
+
