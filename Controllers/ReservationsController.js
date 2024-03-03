@@ -122,22 +122,36 @@ let fromCartToPurchased = async (req) => {
     await user.save()
 }
 let CheckOut = async (req, res, next) => {
-    let cinemaName = req.body.cinema
-    let Date = req.body.date
-    let Time = req.body.time
-    let movie = req.body.movie
-    let reservationData = req.body.reserve
+    // let cinemaName = req.body.cinema
+    // let Date = req.body.date
+    // let Time = req.body.time
+    // let movie = req.body.movie
+    // let reservationData = req.body.reserve
 
-    let reservation = await ReseervationsModel.findOne({
-        cinema: cinemaName,
-        date: Date,
-        time: Time,
-        "movie-name": movie
+    // [{movie :seats:[]}]
+    let cart=req.body.cart
+    cart.forEach(async (Moviereservation)=>{
+      let found = await ReseervationsModel.findOne({
+            cinema: Moviereservation.cinema,
+            date: Moviereservation.date,
+            time: Moviereservation.time,
+            "movie-name": Moviereservation["movie-name"]
+        })
+        Moviereservation.seats.forEach((seat)=>{
+          found.reserved.push(seat)
+        })
+        await found.save()
     })
-    reservationData.forEach((seat) => {
-        reservation.reserved.push(seat)
-    })
-    await reservation.save()
+    // let reservation = await ReseervationsModel.findOne({
+    //     cinema: cinemaName,
+    //     date: Date,
+    //     time: Time,
+    //     "movie-name": movie
+    // })
+    // reservationData.forEach((seat) => {
+    //     reservation.reserved.push(seat)
+    // })
+    // await reservation.save()
 
     await fromCartToPurchased(req)
 
