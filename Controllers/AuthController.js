@@ -30,19 +30,30 @@ let register= async(req,res)=>{
 }
 let login=async(req,res)=>{
     var body = req.body;
+    if(!body.gmail){
+        body.email = body.email.toLowerCase();
+        let foundUser = await FoundUser(body.email);
+        if(!foundUser) return res.status(404).send({message:"invalid email or password"})
+        
+        var passwordValid = await bcrypt.compare(body.password,foundUser.password);
+       
+        if(!passwordValid) return res.status(404).send({message:"invalid email or password"});
+      
+        var token = jwt.sign({id:foundUser._id,email:foundUser.email},"secret");
+      
+        res.header("x-auth-token",token);
+        res.status(200).send({token:token});
+    }else{
+        body.email = body.email.toLowerCase();
+        let foundUser = await FoundUser(body.email);
+        if(!foundUser) return res.status(404).send({message:"invalid email or password"})
+        var token = jwt.sign({id:foundUser._id,email:foundUser.email},"secret");
+        res.header("x-auth-token",token);
+        res.status(200).send({token:token});
+
+    }
    
-    body.email = body.email.toLowerCase();
-    let foundUser = await FoundUser(body.email);
-    if(!foundUser) return res.status(404).send({message:"invalid email or password"})
     
-    var passwordValid = await bcrypt.compare(body.password,foundUser.password);
-   
-    if(!passwordValid) return res.status(404).send({message:"invalid email or password"});
-  
-    var token = jwt.sign({id:foundUser._id,email:foundUser.email},"secret");
-  
-    res.header("x-auth-token",token);
-    res.status(200).send({token:token});
 }
 
 let decodeToken=async(req,res)=>{
