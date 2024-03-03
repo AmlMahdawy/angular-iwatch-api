@@ -9,11 +9,14 @@ const ReservationsController= require("../Controllers/ReservationsController")
 // filter routes
 
 router.post("/cinema-name/dates",ReservationsController.GetCinemaDates)
-router.post("/cinema-name/dates/movies",ReservationsController.GetCinemaMovies)
+// router.get("/cinema-name/dates/movies",ReservationsController.GetCinemaMovies)
 router.post("/cinema-name/dates/movies/times",ReservationsController.GetCinemaTimes)
 
+// filter routes
+router.post("/movie-name",ReservationsController.MovieReservationDetails)
+
 //renders already reserved seats
-router.get("/reserved-seats",ReservationsController.RenderSeats)
+router.post("/reserved-seats",ReservationsController.RenderSeats)
 
 //reserve new seats (add to cart step)
 router.post("/add/seats",ReservationsController.addSeatToCart)

@@ -12,7 +12,11 @@ let GetUserCart = async (req, res, next) => {
 
     let userID = await AuthController.decodeToken(req, res)
     let user = await GetUserById(userID)
-    res.send(user.cart)
+    let totalPrice=0;
+    user.cart.forEach((movie)=>{
+      totalPrice=totalPrice+(  movie.seats.length*100)
+    })
+    res.send({cart:user.cart,totalPrice:totalPrice})
 }
 let GetUserData = async (req, res, next) => {
 

@@ -27,7 +27,7 @@ let GetAllMovies = async (req, res, next) => {
 }
 
 let GetMovieByName = async (req, res, next) => {
-  let movie = await MoviesModel.findOne({ Title: req.body.movieName })
+  let movie = await MoviesModel.findOne({ Title: req.body.movie })
   res.send(movie)
 }
 
