@@ -2,6 +2,9 @@ const ReseervationsModel = require('../Models/ReservationModel');
 const AuthModel = require('../Models/AuthModel');
 const AuthController = require("../Controllers/AuthController")
 const UsersController = require("../Controllers/UsersController")
+const MoviesModel = require('../Models/MoviesModel');
+
+
 
 
 
@@ -94,14 +97,15 @@ let addSeatToCart = async (req, res, next) => {
     let movie = req.body.movie
     let reservationData = req.body.reserve
 
-    
+    let movieImg= await MoviesModel.findOne({Title:movie})
     let userID = await AuthController.decodeToken(req)
     userCart = {
         cinema: cinemaName,
         date: Date,
         time: +Time,
         "movie-name": movie,
-        seats: reservationData
+        "movie-img":movieImg.Poster,
+           seats: reservationData
     }
     let user = await AuthModel.findOne({ _id: userID })
 
@@ -122,13 +126,7 @@ let fromCartToPurchased = async (req) => {
     await user.save()
 }
 let CheckOut = async (req, res, next) => {
-    // let cinemaName = req.body.cinema
-    // let Date = req.body.date
-    // let Time = req.body.time
-    // let movie = req.body.movie
-    // let reservationData = req.body.reserve
-
-    // [{movie :seats:[]}]
+   
     let cart=req.body.cart
     cart.forEach(async (Moviereservation)=>{
       let found = await ReseervationsModel.findOne({
@@ -142,16 +140,7 @@ let CheckOut = async (req, res, next) => {
         })
         await found.save()
     })
-    // let reservation = await ReseervationsModel.findOne({
-    //     cinema: cinemaName,
-    //     date: Date,
-    //     time: Time,
-    //     "movie-name": movie
-    // })
-    // reservationData.forEach((seat) => {
-    //     reservation.reserved.push(seat)
-    // })
-    // await reservation.save()
+  
 
     await fromCartToPurchased(req)
 
