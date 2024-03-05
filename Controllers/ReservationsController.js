@@ -18,7 +18,7 @@ let MovieReservationDetails = async (req, res, next) => {
     let times = []
     MatchedMovies.forEach((el) => {
         if (!cinemas.includes(el.cinema)) { cinemas.push(el.cinema) }
-       
+
 
 
 
@@ -97,17 +97,20 @@ let addSeatToCart = async (req, res, next) => {
     let movie = req.body.movie
     let reservationData = req.body.reserve
 
-    let movieImg= await MoviesModel.findOne({Title:movie})
+    let movieImg = await MoviesModel.findOne({ Title: movie })
     let userID = await AuthController.decodeToken(req)
     userCart = {
         cinema: cinemaName,
         date: Date,
         time: +Time,
         "movie-name": movie,
-        "movie-img":movieImg.Poster,
-           seats: reservationData
+        "movie-img": movieImg.Poster,
+        seats: reservationData
+
     }
+
     let user = await AuthModel.findOne({ _id: userID })
+
 
     user.cart.push(userCart)
     await user.save()
@@ -126,21 +129,21 @@ let fromCartToPurchased = async (req) => {
     await user.save()
 }
 let CheckOut = async (req, res, next) => {
-   
-    let cart=req.body.cart
-    cart.forEach(async (Moviereservation)=>{
-      let found = await ReseervationsModel.findOne({
+
+    let cart = req.body.cart
+    cart.forEach(async (Moviereservation) => {
+        let found = await ReseervationsModel.findOne({
             cinema: Moviereservation.cinema,
             date: Moviereservation.date,
             time: Moviereservation.time,
             "movie-name": Moviereservation["movie-name"]
         })
-        Moviereservation.seats.forEach((seat)=>{
-          found.reserved.push(seat)
+        Moviereservation.seats.forEach((seat) => {
+            found.reserved.push(seat)
         })
         await found.save()
     })
-  
+
 
     await fromCartToPurchased(req)
 
