@@ -6,6 +6,8 @@ router.get("/all",MoviesController.GetAllMovies)
 router.post("/review-check",MoviesController.checkForUserReviews)
 router.post("/add-review",MoviesController.PostReview)
 router.post("/movie-name",MoviesController.GetMovieByName)
+router.post("/reviews",MoviesController.GetMovieReviews)
+
 
 
 
