@@ -114,7 +114,7 @@ let addSeatToCart = async (req, res, next) => {
 
     user.cart.push(userCart)
     await user.save()
-    res.send(user)
+    res.send({message:"seats Added"})
 }
 
 let fromCartToPurchased = async (req) => {

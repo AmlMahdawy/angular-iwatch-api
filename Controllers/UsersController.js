@@ -1,6 +1,6 @@
 const AuthModel = require('../Models/AuthModel');
 const AuthController = require("../Controllers/AuthController")
-const MoviesModel=require("../Models/MoviesModel")
+const MoviesModel = require("../Models/MoviesModel")
 const ReservationModel = require("../Models/ReservationModel");
 const { json } = require('express');
 
@@ -42,7 +42,7 @@ let DeleteMovieFromCart = async (req, res, next) => {
     user.cart.forEach(async (movie, i) => {
         if (JSON.stringify(movie) == JSON.stringify(deletedMovie)) {
             user.cart.splice(i, 1)
-          await  user.save()
+            await user.save()
             message = "deleted"
         }
 
@@ -51,50 +51,54 @@ let DeleteMovieFromCart = async (req, res, next) => {
 
 }
 
-let AddToFavourites= async(req,res,next)=>{
-    let movieName=req.body.movie
+let AddToFavourites = async (req, res, next) => {
+    let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
     let user = await GetUserById(userID)
-    let movie= await MoviesModel.findOne({Title:movieName})
+    let movie = await MoviesModel.findOne({ Title: movieName })
     user.favourite.push(movie)
-   await user.save()
-   res.send({message:"Added To Favourites"})
+    await user.save()
+    res.send({ message: "Added To Favourites" })
 
 
 }
-let RemoveFromFavourites=async(req,res,next)=>{
-    let movieName=req.body.movie
+let RemoveFromFavourites = async (req, res, next) => {
+    let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
     let user = await GetUserById(userID)
-    let movie= await MoviesModel.findOne({Title:movieName})
-    
-    user.favourite.forEach( async(fav,i)=>{
-        if(JSON.stringify(movie)==JSON.stringify(fav)){
-            user.favourite.splice(i,1)
+    let movie = await MoviesModel.findOne({ Title: movieName })
+
+    user.favourite.forEach(async (fav, i) => {
+        if (JSON.stringify(movie) == JSON.stringify(fav)) {
+            user.favourite.splice(i, 1)
             await user.save()
-   res.send({message:"Removed From Favourites"})
+            res.send({ message: "Removed From Favourites" })
 
         }
     })
-   res.send({message:"not a favourite to remove"})
+
 
 
 }
 
-let checkIfFavourite=async(req,res,next)=>{
-    let movieName=req.body.movie
+let checkIfFavourite = async (req, res, next) => {
+    let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
     let user = await GetUserById(userID)
-    let movie= await MoviesModel.findOne({Title:movieName})
-    
-    user.favourite.forEach( async(fav,i)=>{
-        if(JSON.stringify(movie)==JSON.stringify(fav)){
-            
-            res.send({favourited:true})
+    let movie = await MoviesModel.findOne({ Title: movieName })
 
-        }
+    let found = user.favourite.find(async (fav, i) => {
+        return JSON.stringify(movie) == JSON.stringify(fav)
     })
-   res.send({favourited:false})
+
+    if (found) {
+        res.send({ favourited: true })
+
+    } else {
+        res.send({ favourited: false })
+
+    }
+
 
 
 }
