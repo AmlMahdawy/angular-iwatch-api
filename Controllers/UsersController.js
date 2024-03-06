@@ -81,12 +81,31 @@ let RemoveFromFavourites=async(req,res,next)=>{
 
 }
 
+let checkIfFavourite=async(req,res,next)=>{
+    let movieName=req.body.movie
+    let userID = await AuthController.decodeToken(req, res)
+    let user = await GetUserById(userID)
+    let movie= await MoviesModel.findOne({Title:movieName})
+    
+    user.favourite.forEach( async(fav,i)=>{
+        if(JSON.stringify(movie)==JSON.stringify(fav)){
+            
+            res.send({favourited:true})
+
+        }
+    })
+   res.send({favourited:false})
+
+
+}
+
 module.exports = {
     GetUserCart,
     GetUserData,
     GetUserById,
     DeleteMovieFromCart,
     AddToFavourites,
-    RemoveFromFavourites
+    RemoveFromFavourites,
+    checkIfFavourite
 }
 
