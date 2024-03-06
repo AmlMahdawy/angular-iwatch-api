@@ -17,6 +17,8 @@ const UsersRoutes = require("./Routes/UserRoutes")
 const CinemasRoutes = require("./Routes/CinemasRoutes")
 const MoviesRoutes = require("./Routes/MoviesRoutes")
 const ReservationRoutes = require("./Routes/ReservationRoutes")
+const DashboardRoutes = require("./Routes/DashboardRoutes")
+
 
 
 

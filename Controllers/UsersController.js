@@ -36,6 +36,7 @@ let DeleteMovieFromCart = async (req, res, next) => {
 
     let deletedMovie = req.body.deletedMovie
     let userID = await AuthController.decodeToken(req, res)
+    
     let user = await GetUserById(userID)
     let message = "movie not found"
 
@@ -54,17 +55,23 @@ let DeleteMovieFromCart = async (req, res, next) => {
 let AddToFavourites = async (req, res, next) => {
     let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
+    if(userID){
     let user = await GetUserById(userID)
     let movie = await MoviesModel.findOne({ Title: movieName })
     user.favourite.push(movie)
     await user.save()
     res.send({ message: "Added To Favourites" })
+    }else{
+    res.send({ message: "user not logged in" })
 
+    }
 
 }
 let RemoveFromFavourites = async (req, res, next) => {
     let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
+    if(userID){
+
     let user = await GetUserById(userID)
     let movie = await MoviesModel.findOne({ Title: movieName })
 
@@ -76,7 +83,11 @@ let RemoveFromFavourites = async (req, res, next) => {
 
         }
     })
+}
+else {
+    res.send({ message: "user not logged in" })
 
+  }
 
 
 }
@@ -84,6 +95,7 @@ let RemoveFromFavourites = async (req, res, next) => {
 let checkIfFavourite = async (req, res, next) => {
     let movieName = req.body.movie
     let userID = await AuthController.decodeToken(req, res)
+    if(userID){
     let user = await GetUserById(userID)
     let movie = await MoviesModel.findOne({ Title: movieName })
 
@@ -98,7 +110,10 @@ let checkIfFavourite = async (req, res, next) => {
         res.send({ favourited: false })
 
     }
-
+    }else {
+        res.send({ message: "user not logged in" })
+    
+      }
 
 
 }

@@ -46,7 +46,7 @@ let login=async(req,res)=>{
     }else{
         body.email = body.email.toLowerCase();
         let foundUser = await FoundUser(body.email);
-        if(!foundUser) return res.status(404).send({message:"invalid email or password"})
+        if(!foundUser) return res.status(404).send({message:false})
         var token = jwt.sign({id:foundUser._id,email:foundUser.email},"secret");
         res.header("x-auth-token",token);
         res.status(200).send({token:token});
@@ -58,8 +58,12 @@ let login=async(req,res)=>{
 
 let decodeToken=async(req,res)=>{
     let token=req.header("Authorization")
-    let userID= jwt.verify(token,"secret").id
-    return userID
+    if(token){
+        let userID= jwt.verify(token,"secret").id
+        return userID
+    }
+    return false;
+  
 }
 
 
