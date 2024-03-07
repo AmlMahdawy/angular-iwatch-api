@@ -99,8 +99,8 @@ let checkIfFavourite = async (req, res, next) => {
     let user = await GetUserById(userID)
     let movie = await MoviesModel.findOne({ Title: movieName })
 
-    let found = user.favourite.find(async (fav, i) => {
-        return JSON.stringify(movie) == JSON.stringify(fav)
+    let found = user.favourite.find( (fav, i) => {
+        return JSON.stringify(movie) ===JSON.stringify(fav)
     })
 
     if (found) {
