@@ -29,6 +29,7 @@ app.use("/cinemas",CinemasRoutes)
 app.use("/movies",MoviesRoutes)
 app.use("/reserve",ReservationRoutes)
 app.use("/user",UsersRoutes)
+app.use("/dashboard",DashboardRoutes)
 
 
 

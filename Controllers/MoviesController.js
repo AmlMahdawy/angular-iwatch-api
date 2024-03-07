@@ -1,6 +1,8 @@
 const MoviesModel = require('../Models/MoviesModel');
 const jwt = require('jsonwebtoken');
-const AuthController = require("./AuthController")
+const AuthController = require("./AuthController");
+const AuthModel = require('../Models/AuthModel');
+const DashboardController= require("../Controllers/DashboardController")
 
 let checkForUserReviews = async (req, res, next) => {
 
@@ -38,7 +40,7 @@ let GetMovieByName = async (req, res, next) => {
     let movie = await MoviesModel.findOne({ Title: req.body.movie })
     res.send(movie)
   }else{
-    res.status(404).send(movie)
+    res.status(404).send("not found")
 
   }
   
@@ -48,13 +50,17 @@ let PostReview = async (req, res, next) => {
   reviewx = req.body.review
   let userID = await AuthController.decodeToken(req)
   if (userID) {
-    reviewx.userId = userID
+    let user = await AuthModel.findOne({_id:userID})
+    reviewx.name = user.name
     let movie = await MoviesModel.findOne({ Title: req.body.movie })
     movie.Reviews.push(reviewx)
     await movie.save()
+     DashboardController.addReview(req.body.movie)
     res.status(200).send({ message: "review added" })
+  }else{
+    res.send({ message: "user not logged in" })
+
   }
-  res.send({ message: "user not logged in" })
 
 }
 let GetMovieReviews = async (req, res, next) => {

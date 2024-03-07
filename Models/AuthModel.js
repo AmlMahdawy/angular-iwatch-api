@@ -8,7 +8,7 @@ const usersSchema = new mongoose.Schema({
         required:true,
     },
     password:{type:String, minLength:5, required:true},
-    isAdmin:{type:Boolean},
+    isAdmin:{type:Boolean,default:false},
     purchased:[],
     favourite:[],
     cart:[]
