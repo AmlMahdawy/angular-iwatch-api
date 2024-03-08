@@ -6,11 +6,16 @@ const DashboardController= require("../Controllers/DashboardController")
 
 let checkForUserReviews = async (req, res, next) => {
 
-  let userID = AuthController.decodeToken(req)
+  let userID = await AuthController.decodeToken(req)
   if (userID && req.body.movie ) {
+
+
+    let user =await AuthModel.findOne({_id:userID})
+
     let movie = await MoviesModel.findOne({ Title: req.body.movie })
+    
     let found = movie.Reviews.find((ele) => {
-      return ele.userId == userID
+      return ele.name == user.name
     })
     if (found) {
       res.send({ reviewed: true })
