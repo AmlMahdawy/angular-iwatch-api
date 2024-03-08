@@ -40,14 +40,14 @@ let DeleteMovieFromCart = async (req, res, next) => {
     let user = await GetUserById(userID)
     let message = "movie not found"
 
-    user.cart.forEach(async (movie, i) => {
-        if (JSON.stringify(movie) == JSON.stringify(deletedMovie)) {
+  
+    for(let i =0;i<user.cart.length;i++){
+        if (JSON.stringify(user.cart[i]) ===JSON.stringify(deletedMovie)) {
             user.cart.splice(i, 1)
             await user.save()
             message = "deleted"
         }
-
-    })
+    }
     res.send({ message: message })
 
 }
