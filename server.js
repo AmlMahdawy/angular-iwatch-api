@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 2024;
 const cors = require('cors');
 
 const mongoose = require('mongoose');
-const DB_URL = "mongodb://localhost:27017/Angular";
+const DB_URL = "mongodb+srv://Mully:Lilo2027@iwatch.alrjmxg.mongodb.net/?retryWrites=true&w=majority&appName=Iwatch";
 mongoose.connect(DB_URL,{  autoIndex: true });
 
 app.use(express.urlencoded({extended:true}));
