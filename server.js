@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 2024;
@@ -5,7 +6,7 @@ const PORT = process.env.PORT || 2024;
 const cors = require('cors');
 
 const mongoose = require('mongoose');
-const DB_URL = "mongodb+srv://Mully:Lilo2027@iwatch.alrjmxg.mongodb.net/?retryWrites=true&w=majority&appName=Iwatch";
+const DB_URL = "mongodb+srv://Mully:Lilo2027@iwatch.alrjmxg.mongodb.net/";
 mongoose.connect(DB_URL,{  autoIndex: true });
 
 app.use(express.urlencoded({extended:true}));
