@@ -6,6 +6,7 @@ const DashboardSchema = new mongoose.Schema({
     usersCount:{type:Number},
     movieStatistics:[],
     totalReview:Number,
+    totalMovies:Number
     
 
 })

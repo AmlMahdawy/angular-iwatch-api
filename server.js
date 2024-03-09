@@ -30,6 +30,7 @@ app.use("/movies",MoviesRoutes)
 app.use("/reserve",ReservationRoutes)
 app.use("/user",UsersRoutes)
 app.use("/dashboard",DashboardRoutes)
+app.get(["/","/*"],(req,res,next)=>{res.send({message:"not found"})})
 
 
 
